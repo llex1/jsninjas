@@ -11,22 +11,27 @@ import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 
 function App() {
-  const [isPhotoLoad, handleIsPhotoLoad] = useState(false);
-  useEffect(()=>{
-    setTimeout(()=>{handleIsPhotoLoad(true)}, 5000)
+  const [isPhotoLoad, handleIsPhotoLoad] = useState("");
+  useEffect(() => {
     const fetchOptions = {
-      method: 'GET',
+      method: "GET",
       mode: "cors",
       // headers: {
 
       // }
-    }
-    fetch('http://127.0.0.1:8080', fetchOptions).then((data)=>{console.log(data.blob)})
+    };
+    fetch("http://127.0.0.1:8080", fetchOptions)
+      .then((data) => {
+        return data.blob();
+      })
+      .then(data => {
+        const SXX = URL.createObjectURL(data);
+        handleIsPhotoLoad(SXX)
 
+      });
 
-
-    console.log('effect');
-  },[])
+    console.log("effect");
+  }, []);
 
   return (
     <Container>
@@ -35,7 +40,7 @@ function App() {
           <CardMedia
             component="img"
             height="240"
-            src="https://static.komservice.net/img/komservicenet/ks.png"
+            src={isPhotoLoad}
           />
         ) : (
           <Skeleton variant="rectangular" height={240} />
