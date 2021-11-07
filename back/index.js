@@ -1,7 +1,6 @@
 require("dotenv").config();
 const exprss = require("express");
 const cors = require('cors');
-const multer = require("multer")();
 
 const superheroRouter = require("./routes/superhero.router");
 
@@ -16,7 +15,6 @@ class Server {
       origin:"*"
     }))
     this.app.use(exprss.json());
-    this.app.use(multer.any())
   }
   initRoutes() {
     this.app.use("/", superheroRouter)

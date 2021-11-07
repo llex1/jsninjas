@@ -1,61 +1,52 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-import { useState, useEffect } from "react";
+import { Fragment } from "react";
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
-import Container from "@mui/material/Container";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-
-import Skeleton from "@mui/material/Skeleton";
+import Button from "react-bootstrap/Button"
 
 function App() {
-  const [isPhotoLoad, handleIsPhotoLoad] = useState("");
-  useEffect(() => {
-    const fetchOptions = {
-      method: "GET",
-      mode: "cors",
-      // headers: {
 
-      // }
-    };
-    fetch("http://127.0.0.1:8080", fetchOptions)
-      .then((data) => {
-        return data.blob();
-      })
-      .then(data => {
-        const SXX = URL.createObjectURL(data);
-        handleIsPhotoLoad(SXX)
-
-      });
-
-    console.log("effect");
-  }, []);
+  function handleForm(e){
+    e.preventDefault()
+    console.log(e);
+    console.log(e.target.nickname.value);
+    console.log(e.target.files);
+  }
 
   return (
-    <Container>
-      <Card sx={{ maxWidth: 400 }}>
-        {isPhotoLoad ? (
-          <CardMedia
-            component="img"
-            height="240"
-            src={isPhotoLoad}
-          />
-        ) : (
-          <Skeleton variant="rectangular" height={240} />
-        )}
+    <Fragment>
+      <Navbar bg="light" className="mb-3">
+        <Container>
+          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+        </Container>
+      </Navbar>
 
-        <CardContent>
-          <Typography>Supermane</Typography>
-          <Typography>
-            He was born Kal-El on the planet Krypton, before being rocketed to
-            Earth as an infant by his scientist father Jor-El, moments before
-            Krypton's destruction...
-          </Typography>
-        </CardContent>
-      </Card>
-    </Container>
+      <Container>
+        <Form onSubmit={handleForm}>
+          <Row className="mb-3">
+            <Form.Group as={Col} className="col-12 col-md-6" controlId="nickname">
+              <Form.Label>Nickname</Form.Label>
+              <Form.Control type="text"></Form.Control>
+            </Form.Group>
+            <Form.Group as={Col} className="col-12 col-md-6" controlId="realname">
+              <Form.Label>Real Name</Form.Label>
+              <Form.Control type="text"></Form.Control>
+            </Form.Group>
+          </Row>
+
+            <Form.Control type='file' className="mb-3" multiple id="files"/>
+
+
+          <Button variant="primary" type="submit">Add Superhore</Button>
+        </Form>
+      </Container>
+    </Fragment>
   );
 }
 
