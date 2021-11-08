@@ -15,7 +15,8 @@ class Server {
     this.app = exprss();
   }
   async initDB() {
-    this.app.locals.db = await (new MongoController(process.env.DB1)).run()
+    this.app.locals.db1 = await (new MongoController(process.env.MONGO1, process.env.DB1)).run()
+    this.app.locals.db2 = await (new MongoController(process.env.MONGO2, process.env.DB2)).run()
   }
   initMiddlewares() {
     this.app.use(morgan(':method \x1b[36m:servername:url\x1b[0m  - [:status] :response-time ms'))

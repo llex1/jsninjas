@@ -15,15 +15,17 @@ import Add from "./components/Add";
 import Cards from './components/Cards'
 
 function App() {
-  const [nicknames, handleNicknames] = useState([])
+  const [rootData, handleRootData] = useState([])
   
   
   useEffect(()=>{
     getData()
   },[])
+
   async function getData(){
-    const data = await (await fetch("http://127.0.0.1:8080?page=1")).json();
-    handleNicknames(data)
+    const data = await (await fetch("http://127.0.0.1:8080?page=")).json();
+    handleRootData(data)
+    // console.log(data);
   }
 
 
@@ -36,7 +38,7 @@ function App() {
         </Container>
       </Navbar>
       {/* <Add/> */}
-      {nicknames.length ? <Cards data={nicknames}/> : <Fragment/>}
+      {rootData.length ? <Cards data={rootData}/> : <Fragment/>}
 
 
       

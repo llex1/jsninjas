@@ -57,6 +57,7 @@ function Add() {
     <Container>
       <Form onSubmit={handleSubmit} onChange={handleChange} id="addSuperhero">
         <Row className="mb-3">
+          {/* Вважаємо що нікнейм унікальний, буде час прикручу Lodash*/}
           <Form.Group as={Col} className="col-12 col-md-6" controlId="nickname">
             <Form.Label>Nickname</Form.Label>
             <Form.Control type="text" value={nicknameValue} required />
