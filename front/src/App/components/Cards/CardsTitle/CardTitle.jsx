@@ -1,5 +1,7 @@
+import styles from './CardsTitle.module.css';
+
 function CardsTitle({ nickname }) {
-  return <p>{nickname}</p>;
+  return <p className={`text-center ${styles.title}`}>{nickname}</p>;
 }
 
 export default CardsTitle;
