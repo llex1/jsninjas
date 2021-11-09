@@ -54,8 +54,6 @@ function App() {
           <Button type="button" value="add" onClick={() => setModalAdd(true)} >Add One</Button>
         </Container>
       </Navbar>
-
-
       <Add
         show={modalAdd}
         onHide={() => setModalAdd(false)}
@@ -65,16 +63,18 @@ function App() {
         show={modalEdit}
         onHide={closeEditCard}
       />
-
       {rootData.length ? <Cards data={rootData} edit={editCard} /> : <Fragment />}
+
+{/* не встигаю, дуже шкода  */}
+
       <Container className="py-4">
         <Pagination className="justify-content-center">
-          <Pagination.Prev />
-          <Pagination.Item active>{1}</Pagination.Item>
-          <Pagination.Item>{3}</Pagination.Item>
-          <Pagination.Item >{3}</Pagination.Item>
-          <Pagination.Item >{4}</Pagination.Item>
-          <Pagination.Next />
+          <Pagination.Prev disabled />
+          <Pagination.Item disabled>{1}</Pagination.Item>
+          <Pagination.Item disabled>{3}</Pagination.Item>
+          <Pagination.Item disabled>{3}</Pagination.Item>
+          <Pagination.Item disabled>{4}</Pagination.Item>
+          <Pagination.Next disabled/>
         </Pagination>
       </Container>
 

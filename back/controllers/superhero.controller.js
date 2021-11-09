@@ -4,13 +4,10 @@ const { fork } = require("child_process");
 const multer = require("multer")();
 const uuid = require("short-uuid");
 
-// fs.readFile(__dirname + "/../temp/image0.png").then((data)=>console.log(data))
-
 class SuperHeorController {
   catchFile = multer.array("images", 10);
 
   main = async (req, res, next) => {
-    // const file = await fs.readFile(__dirname + "/../temp/jsninjas.png");
     let result;
     let page = 0;
     if (+req.query.page > 1) {
@@ -44,7 +41,7 @@ class SuperHeorController {
     let buff = false;
     try {
       result = await req.app.locals.db2
-        .collection(process.env.DB1Collection1)
+        .collection(process.env.DB2Collection1)
         .findOne(
           { heroId: heroId },
           {
@@ -53,10 +50,10 @@ class SuperHeorController {
             },
           }
         );
+        buff = Buffer.from(result.files.buffer, "base64");
     } catch (err) {
       console.log(err);
     }
-    buff = Buffer.from(result.files.buffer, "base64");
     res.status(200).send(buff);
     next();
   };
@@ -147,10 +144,6 @@ class SuperHeorController {
     res.status("500").send({message: "something wrong"});
     next()
   }
-
-
-
-
 
   update = async (req, res, next) => {
     const { heroId, nickname, realname, description, superpowers, phrase, isImagesExist } = req.body;

@@ -7,6 +7,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
+import styles from './Edit.module.css';
+// import placeholderAvatar from './../../../assets/placeholder.svg'
 
 function Edit(props) {
   const heroId = props.heroId
@@ -35,6 +37,7 @@ function Edit(props) {
   }, [heroId])
   async function getInfo() {
     const result = await (await fetch(`http://127.0.0.1:8080/info/${heroId}`)).json()
+    allImages(result.isImagesExist)
     nicknameHandle(result.nickname)
     realnameHandle(result.realname)
     descriptionHandle(result.description)
@@ -42,9 +45,18 @@ function Edit(props) {
     phraseHandle(result.phrase)
     handleIsImagesExist(result.isImagesExist)
   }
+  async function allImages(_isImageExist){
+    
+
+
+  }
+
+
   async function handleDelete(e) {
     e.preventDefault();
-    const result = await fetch(`http://127.0.0.1:8080/delete/${heroId}?isImagesExist=${isImagesExist}`)
+    const result = await fetch(`http://127.0.0.1:8080/delete/${heroId}?isImagesExist=${isImagesExist}`, {
+      method: "DELETE"
+    })
     if (result.status === "500") { console.log('something wrong') }
     props.onHide()
   }
@@ -55,7 +67,7 @@ function Edit(props) {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-
+    
     const outData = new FormData();
     outData.append("heroId", heroId)
     outData.append("isImagesExist", isImagesExist)
@@ -70,11 +82,9 @@ function Edit(props) {
       }
     }
     const data = await fetch("http://127.0.0.1:8080/update", {
-      method: "POST",
+      method: "PUT",
       body: outData,
     });
-
-
 
   }
 
@@ -93,6 +103,9 @@ function Edit(props) {
       </Modal.Header>
       <Modal.Body className="show-grid">
         <Container>
+          <Row className={styles.imagesGrid}>
+            {/* images */}
+          </Row>
           <Form onSubmit={handleSubmit} onChange={handleChange} id="addSuperhero">
             <Row className="mb-3">
               {/* Lodash */}
