@@ -9,11 +9,13 @@ const uuid = require("short-uuid");
 class SuperHeorController {
   catchFile = multer.array("images", 10);
 
-  getNickname = async (req, res, next) => {
+  main = async (req, res, next) => {
     // const file = await fs.readFile(__dirname + "/../temp/jsninjas.png");
     let result;
-    let page = 0
-    if(+(req.query.page)>1){page = +(req.query.page)-1}
+    let page = 0;
+    if (+req.query.page > 1) {
+      page = +req.query.page - 1;
+    }
     try {
       result = await req.app.locals.db1
         .collection(process.env.DB1Collection1)
@@ -22,13 +24,13 @@ class SuperHeorController {
           {
             projection: {
               nickname: 1,
-              heroId:1,
-              isImagesExist:1
+              heroId: 1,
+              isImagesExist: 1,
             },
           }
         )
         .limit(5)
-        .skip(page*5)
+        .skip(page * 5)
         .toArray();
     } catch (err) {}
 
@@ -41,21 +43,35 @@ class SuperHeorController {
     let result;
     let buff = false;
     try {
-      // resultFile = await fs.readFile(__dirname + "/../temp/image0.png");
-      // console.log(resultFile);
       result = await req.app.locals.db2
         .collection(process.env.DB1Collection1)
         .findOne(
           { heroId: heroId },
           {
-          projection:{
-            files:{$first: "$files"}
-          }
+            projection: {
+              files: { $first: "$files" },
+            },
           }
         );
-    } catch (err) {}
-    buff = Buffer.from(result.files.buffer, 'base64');
+    } catch (err) {
+      console.log(err);
+    }
+    buff = Buffer.from(result.files.buffer, "base64");
     res.status(200).send(buff);
+    next();
+  };
+
+  getInfo = async (req, res, next) => {
+    const heroId = req.params.heroId;
+    let result;
+
+    try {
+      result = await req.app.locals.db1
+        .collection(process.env.DB1Collection1).findOne({heroId:heroId});
+    } catch (err) {
+      console.log(err);
+    }
+    res.status("200").send(result);
     next();
   };
 
@@ -70,31 +86,107 @@ class SuperHeorController {
       chProcess = fork(__dirname + "/../helpers/uploadImages");
       //поки створюється процес, підготую данні
       isImagesExist = true;
+      images.isUpdate = false;
       images.heroId = heroId;
       images["files"] = req.files.map((el, idx, arr) => {
         const imageId = uuid.generate();
         return {
           imageId: imageId,
-          buffer: el.buffer.toString('base64'),
+          buffer: el.buffer.toString("base64"),
         };
       });
       chProcess.send(images);
     }
     try {
-      await req.app.locals.db1.collection(process.env.DB1Collection1).insertOne({
-        heroId,
-        nickname,
-        realname,
-        description,
-        superpowers,
-        phrase,
-        isImagesExist,
-        // isImagesReady
-      });
+      await req.app.locals.db1
+        .collection(process.env.DB1Collection1)
+        .insertOne({
+          heroId,
+          nickname,
+          realname,
+          description,
+          superpowers,
+          phrase,
+          isImagesExist,
+          // isImagesReady
+        });
     } catch (err) {
       console.error(err);
     }
+    res.status("200").send();
+    next();
+  };
 
+  deleteHero = async (req, res, next)=>{
+    const heroId = req.params.heroId;
+    const isImagesExist = req.query.isImagesExist
+    let resultInfo;
+    try {
+      resultInfo = await req.app.locals.db1
+        .collection(process.env.DB1Collection1)
+        .deleteOne({
+          heroId:heroId
+        });
+    } catch (err) {
+      console.error(err);
+    }
+    if(isImagesExist){
+      try {
+        await req.app.locals.db2
+          .collection(process.env.DB2Collection1)
+          .deleteOne({
+            heroId:heroId
+          });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if(resultInfo?.deletedCount){
+      return res.status("200").send();
+    }
+    res.status("500").send({message: "something wrong"});
+    next()
+  }
+
+
+
+
+
+  update = async (req, res, next) => {
+    const { heroId, nickname, realname, description, superpowers, phrase, isImagesExist } = req.body;
+    const images = {};
+ 
+    let chProcess;
+    if (req.files.length) {
+      chProcess = fork(__dirname + "/../helpers/uploadImages");
+      //поки створюється процес, підготую данні
+      images.isUpdate = isImagesExist;
+      images.heroId = heroId;
+      images["files"] = req.files.map((el, idx, arr) => {
+        const imageId = uuid.generate();
+        return {
+          imageId: imageId,
+          buffer: el.buffer.toString("base64"),
+        };
+      });
+      chProcess.send(images);
+    }
+    try {
+      await req.app.locals.db1
+        .collection(process.env.DB1Collection1)
+        .findOneAndUpdate({heroId: heroId},{$set: {
+          nickname,
+          realname,
+          description,
+          superpowers,
+          phrase,
+          isImagesExist,
+          // isImagesReady
+        }
+        });
+    } catch (err) {
+      console.error(err);
+    }
     res.status("200").send();
     next();
   };

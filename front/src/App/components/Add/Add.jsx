@@ -33,9 +33,7 @@ function Add(props) {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(e.target[0].type);
     const outData = new FormData();
-    console.log(e.target);
     for (let i = 0; i < e.target.length; i++) {
       if (e.target[i].type === "text" || e.target[i].type === "textarea") {
         outData.append(e.target[i].id, e.target[i].value);
@@ -50,7 +48,6 @@ function Add(props) {
       method: "POST",
       body: outData,
     });
-    console.log(data);
     handleClear();
   }
 
